@@ -38,13 +38,13 @@ var drawSpirolateral = function(spirolateral_profile) {
 				ctx.quadraticCurveTo(parseInt(curvecontrolcoord.x),parseInt(curvecontrolcoord.y),parseInt(newcoord.x),parseInt(newcoord.y));
 				// record min/max
 				/* */
-				min_x = min_x ? Math.min(parseInt(curvecontrolcoord.x),min_x) : x;
-				min_y = min_y ? Math.min(parseInt(curvecontrolcoord.y),min_y) : y;
-				max_x = max_x ? Math.max(parseInt(curvecontrolcoord.x),max_x) : x;
-				max_y = max_y ? Math.max(parseInt(curvecontrolcoord.y),max_y) : y;
+				min_x = min_x ? Math.min(curvecontrolcoord.x,min_x) : x;
+				min_y = min_y ? Math.min(curvecontrolcoord.y,min_y) : y;
+				max_x = max_x ? Math.max(curvecontrolcoord.x,max_x) : x;
+				max_y = max_y ? Math.max(curvecontrolcoord.y,max_y) : y;
 				/* */
 			} else {
-				ctx.lineTo(parseInt(newcoord.x),parseInt(newcoord.y)); // draw the line
+				ctx.lineTo(newcoord.x,newcoord.y); // draw the line
 			}
 			// set the new start pos
 			x = newcoord.x;
