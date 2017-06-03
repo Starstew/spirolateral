@@ -2,6 +2,50 @@ var cvs, // canvas
 	ctx, // context
 	march_interval_id;
 
+
+var getPathArray = function(spirolateral_profile) {
+	var path_array = [],
+		x = spirolateral_profile.x,
+		y = spirolateral_profile.y,
+		amp = spirolateral_profile.amp,
+		reps = spirolateral_profile.reps
+		sequence = spirolateral_profile.sequence,
+		angle = spirolateral_profile.angle,
+		color = spirolateral_profile.color || "#000",
+		spin = spirolateral_profile.spin,
+		min_x = 1000,
+		min_y = 1000,
+		max_x = 0,
+		max_y = 0;
+
+	var is_spiral = $("#togglerepspiral")[0].checked;
+	var original_amp = amp;
+	for (var j=0; j<reps; j++) {
+		for (var i=0; i<sequence.length; i++) {
+			var len = sequence[i] * amp;
+			var adjusted_angle = angle * (i+j);
+			var newcoord = getLineToCoords(x,y,len,(adjusted_angle)%360,spin);
+			
+			// set the new start pos
+			x = newcoord.x;
+			y = newcoord.y;
+
+			path_array.push({x:x,y:y,rep:j,seqindex:i});
+
+			// record min/max
+			min_x = min_x ? Math.min(x,min_x) : x;
+			min_y = min_y ? Math.min(y,min_y) : y;
+			max_x = max_x ? Math.max(x,max_x) : x;
+			max_y = max_y ? Math.max(y,max_y) : y;
+		}
+		if (is_spiral) {
+			amp += original_amp/10;
+		}
+	}
+
+	return path_array;
+};
+
 var drawSpirolateral = function(spirolateral_profile) {
 	ctx.clearRect(0, 0, cvs.width, cvs.height);
 	ctx.fillStyle = $("#bgcolor").val();
@@ -26,38 +70,18 @@ var drawSpirolateral = function(spirolateral_profile) {
 	ctx.moveTo(x,y);
 	ctx.strokeStyle = color;
 	ctx.lineWidth = $("#linewidth").val();
-	for (var j=0; j<reps; j++) {
-		for (var i=0; i<sequence.length; i++) {
-			var len = sequence[i] * amp;
-			var adjusted_angle = angle * (i+j);
-			var newcoord = getLineToCoords(x,y,len,(adjusted_angle)%360,spin);
-			
-			if ($("#togglecurve").prop("checked")) {
-				var curveamount = parseInt($("#curveamount").val());
-				var curvecontrolcoord = getLineToCoords(x,y,len*.5,(adjusted_angle+curveamount)%360,spin);
-				ctx.quadraticCurveTo(parseInt(curvecontrolcoord.x),parseInt(curvecontrolcoord.y),parseInt(newcoord.x),parseInt(newcoord.y));
-				// record min/max
-				/* */
-				min_x = min_x ? Math.min(curvecontrolcoord.x,min_x) : x;
-				min_y = min_y ? Math.min(curvecontrolcoord.y,min_y) : y;
-				max_x = max_x ? Math.max(curvecontrolcoord.x,max_x) : x;
-				max_y = max_y ? Math.max(curvecontrolcoord.y,max_y) : y;
-				/* */
-			} else {
-				ctx.lineTo(newcoord.x,newcoord.y); // draw the line
-			}
-			// set the new start pos
-			x = newcoord.x;
-			y = newcoord.y;
-
-			// record min/max
-			min_x = min_x ? Math.min(x,min_x) : x;
-			min_y = min_y ? Math.min(y,min_y) : y;
-			max_x = max_x ? Math.max(x,max_x) : x;
-			max_y = max_y ? Math.max(y,max_y) : y;
-		}
-		if ($("#togglerepspiral")[0].checked) {
-			amp += original_amp/10;
+	var is_curve = $("#togglecurve")[0].checked;
+	var path_array = getPathArray(spirolateral_profile);
+	for (var i=0; i<path_array.length; i++) {
+		var newcoord = path_array[i];
+		if (is_curve) {
+			var len = sequence[i%spirolateral_profile.sequence.length] * amp;
+			var adjusted_angle = angle * (newcoord.seqindex + newcoord.rep);
+			var curveamount = parseInt($("#curveamount").val());
+			var curvecontrolcoord = getLineToCoords(newcoord.x,newcoord.y,len*.5,(adjusted_angle+curveamount)%360,spin);
+			ctx.quadraticCurveTo(curvecontrolcoord.x,curvecontrolcoord.y,newcoord.x,newcoord.y);
+		} else {
+			ctx.lineTo(newcoord.x,newcoord.y); // draw the line
 		}
 	}
 	ctx.stroke();
@@ -68,6 +92,25 @@ var drawSpirolateral = function(spirolateral_profile) {
 	var curvenote = $("#togglecurve").prop("checked") ? " Curve:" + parseInt($("#curveamount").val()) : "";
 	var spiralnote = $("#togglerepspiral").prop("checked") ? " Spiral" : "";
 	ctx.fillText("[" + spirolateral_profile.sequence.toString() + "]  " + spirolateral_profile.angle + "\xB0 x" + spirolateral_profile.reps + curvenote + spiralnote,5,15);
+
+	drawSpirolateralSvg(spirolateral_profile);
+};
+
+var drawSpirolateralSvg = function(spirolateral_profile) {
+	var path_array = getPathArray(spirolateral_profile);
+	var svg = $("#spiro_svg")[0];
+	$("#spiro_svg").empty();
+	$("#spiro_svg").css("background-color",$("#bgcolor").val());
+	var svg_path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+	var d = "M " + spirolateral_profile.x + " " + spirolateral_profile.y + " L ";
+	for (var i=0; i<path_array.length; i++) {
+		d += path_array[i].x + " " + path_array[i].y + " ";
+	}
+	svg_path.setAttribute("d",d);
+	svg_path.style.stroke = spirolateral_profile.color || "#000";
+	svg_path.style.strokeWidth = $("#linewidth").val() + "px";
+	svg_path.style.fill = "rgba(0,0,0,0.2)";
+	svg.appendChild(svg_path);
 };
 
 var getLineToCoords = function(startx,starty,len,angle,spin) {
