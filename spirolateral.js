@@ -1,6 +1,10 @@
 var cvs, // canvas
 	ctx, // context
-	march_interval_id;
+	march_interval_id,
+	min_x,
+	min_y,
+	max_x,
+	max_y;
 
 
 var getPathArray = function(spirolateral_profile) {
@@ -12,11 +16,12 @@ var getPathArray = function(spirolateral_profile) {
 		sequence = spirolateral_profile.sequence,
 		angle = spirolateral_profile.angle,
 		color = spirolateral_profile.color || "#000",
-		spin = spirolateral_profile.spin,
-		min_x = 1000,
-		min_y = 1000,
-		max_x = 0,
-		max_y = 0;
+		spin = spirolateral_profile.spin;
+
+	min_x = 1000;
+	min_y = 1000;
+	max_x = 0;
+	max_y = 0;
 
 	var is_spiral = $("#togglerepspiral")[0].checked;
 	var original_amp = amp;
@@ -58,11 +63,7 @@ var drawSpirolateral = function(spirolateral_profile) {
 		sequence = spirolateral_profile.sequence,
 		angle = spirolateral_profile.angle,
 		color = spirolateral_profile.color || "#000",
-		spin = spirolateral_profile.spin,
-		min_x = 1000,
-		min_y = 1000,
-		max_x = 0,
-		max_y = 0;
+		spin = spirolateral_profile.spin;
 
 	amp = amp != null ? amp :  1;
 	var original_amp = amp;
@@ -81,7 +82,7 @@ var drawSpirolateral = function(spirolateral_profile) {
 			var curvecontrolcoord = getLineToCoords(newcoord.x,newcoord.y,len*.5,(adjusted_angle+curveamount)%360,spin);
 			ctx.quadraticCurveTo(curvecontrolcoord.x,curvecontrolcoord.y,newcoord.x,newcoord.y);
 		} else {
-			ctx.lineTo(newcoord.x,newcoord.y); // draw the line
+			ctx.lineTo(newcoord.x,newcoord.y);
 		}
 	}
 	ctx.stroke();
@@ -92,8 +93,6 @@ var drawSpirolateral = function(spirolateral_profile) {
 	var curvenote = $("#togglecurve").prop("checked") ? " Curve:" + parseInt($("#curveamount").val()) : "";
 	var spiralnote = $("#togglerepspiral").prop("checked") ? " Spiral" : "";
 	ctx.fillText("[" + spirolateral_profile.sequence.toString() + "]  " + spirolateral_profile.angle + "\xB0 x" + spirolateral_profile.reps + curvenote + spiralnote,5,15);
-
-	drawSpirolateralSvg(spirolateral_profile);
 };
 
 var drawSpirolateralSvg = function(spirolateral_profile) {
@@ -107,10 +106,14 @@ var drawSpirolateralSvg = function(spirolateral_profile) {
 		d += path_array[i].x + " " + path_array[i].y + " ";
 	}
 	svg_path.setAttribute("d",d);
+	svg_path.setAttribute("vector-effect","non-scaling-stroke");
 	svg_path.style.stroke = spirolateral_profile.color || "#000";
 	svg_path.style.strokeWidth = $("#linewidth").val() + "px";
-	svg_path.style.fill = "rgba(0,0,0,0.2)";
+	svg_path.style.fill = spirolateral_profile.fillcolor || "transparent";
 	svg.appendChild(svg_path);
+
+	// resize the svg to match content
+	svg.setAttribute("viewBox","0 0 " + max_x + " " + max_y);
 };
 
 var getLineToCoords = function(startx,starty,len,angle,spin) {
@@ -133,6 +136,7 @@ var getSpirolateralProfileFromForm = function() {
 		reps: parseInt($("#reps").val()),
 		amp: parseFloat($("#size").val()),
 		color: $("#color").val(),
+		fillcolor: $("#fillcolor").val(),
 		spin: parseInt($("#spin").val())
 	};
 	return sp;
@@ -184,19 +188,22 @@ var startSpinMarch = function(delay) {
 };
 
 var triggerDraws = function() {
-	var spirolateral_profile = getSpirolateralProfileFromForm();
-	drawSpirolateral(spirolateral_profile);
-	offsetToCorner();
+	var sp_cvs = getSpirolateralProfileFromForm(),
+		sp_svg = Object.assign({},sp_cvs);
+	if($("#togglemanpos")[0].checked) {
+		sp_cvs = offsetToCorner(sp_cvs,55);	
+	}
+	sp_svg = offsetToCorner(sp_svg,0);
+	drawSpirolateral(sp_cvs);
+	drawSpirolateralSvg(sp_svg);
 }
 
-var offsetToCorner = function(offset) {
-	if ($("#togglemanpos")[0].checked) {
-		offset = offset || 25;
-		var sp = getSpirolateralProfileFromForm();
-		sp.x = sp.x - min_x + offset;
-		sp.y = sp.y - min_y + offset;
-		drawSpirolateral(sp);
-	}
+var offsetToCorner = function(sp, offset) {
+	getPathArray(sp); // to reset min_x, min_y
+	offset = offset || 0;
+	sp.x = sp.x - min_x + offset;
+	sp.y = sp.y - min_y + offset;
+	return sp;
 };
 
 var refreshUi = function() {
@@ -264,6 +271,9 @@ $(function(){
 		refreshUi();
 		triggerDraws();
 	});
+	$("#spiro_svg").on("click", function(){
+		$("body").toggleClass("svg_fullscreen");
+	})
 
 	// trigger the form
 	$("#settings").submit();
