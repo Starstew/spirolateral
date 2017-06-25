@@ -25,12 +25,15 @@ var getPathArray = function(spirolateral_profile) {
 
 	var is_spiral = $("#togglerepspiral")[0].checked;
 	var original_amp = amp;
+	var linecount = 0;
 	for (var j=0; j<reps; j++) {
 		for (var i=0; i<sequence.length; i++) {
 			var len = sequence[i] * amp;
-			var adjusted_angle = angle * (i+j);
+			var adjusted_angle = (angle * linecount)%360;
+			linecount += 1;
 			var newcoord = getLineToCoords(x,y,len,(adjusted_angle)%360,spin);
 			
+			console.log([sequence[i],adjusted_angle,i,j]);
 			// set the new start pos
 			x = newcoord.x;
 			y = newcoord.y;
@@ -273,7 +276,14 @@ $(function(){
 	});
 	$("#spiro_svg").on("click", function(){
 		$("body").toggleClass("svg_fullscreen");
-	})
+	});
+	$("#spiro_svg").on("contextmenu", function(){
+		$("#codedialog .code").text($("#svgholder").html().split("<br")[0]);
+		$("#codedialog").toggleClass("active",true);
+	});
+	$("#codedialog .closer").on("click", function(){
+		$("#codedialog").toggleClass("active",false);
+	});
 
 	// trigger the form
 	$("#settings").submit();

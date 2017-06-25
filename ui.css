@@ -24,6 +24,28 @@
 #settings label:after {
 	content:":";
 }
+#codedialog {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 400px;
+	height: 400px;
+}
+#codedialog.active {
+	display: block;
+	background: #ccc;
+	border: 2px solid green;
+}
+#codedialog .code {
+	width: 75%;
+	height: 100%;
+}
+#codedialog .closer {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
 #start_x,
 #start_y,
 #angle,
