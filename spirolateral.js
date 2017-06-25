@@ -32,8 +32,6 @@ var getPathArray = function(spirolateral_profile) {
 			var adjusted_angle = (angle * linecount)%360;
 			linecount += 1;
 			var newcoord = getLineToCoords(x,y,len,(adjusted_angle)%360,spin);
-			
-			console.log([sequence[i],adjusted_angle,i,j]);
 			// set the new start pos
 			x = newcoord.x;
 			y = newcoord.y;
