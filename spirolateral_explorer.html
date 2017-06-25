@@ -33,14 +33,16 @@
 		<label for="togglecurve">Curve</label><input id="togglecurve" type="checkbox"/><br/>
 		<label for="curveamount">Curvage</label><input id="curveamount" value="36" disabled/><br/>
 		<hr>
-		<button type="submit">SUBMIT</button>
+		<button type="submit">APPLY SETTINGS</button>
 		<br/>
 		<button type="button" id="ssanglemarch">TOGGLE ANGLE MARCH</button>
 		<button type="button" id="curvemarch">TOGGLE CURVE MARCH</button>
 		<button type="button" id="spinmarch">TOGGLE SPIN MARCH</button>
-		<svg id="spiro_svg" width="96%" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" title="SVG version"></svg><br/>SVG version
+		<div id="svgholder">
+			<svg id="spiro_svg" width="96%" viewBox="0 0 750 750" xmlns="http://www.w3.org/2000/svg" title="SVG version"></svg><br/>SVG version
+		</div>
 	</form>
-	<canvas id="spiro_canvas" width="1000" height="1000"></canvas>
+	<canvas id="spiro_canvas" width="750px" height="750px"></canvas>
 
 </body>
 </html>

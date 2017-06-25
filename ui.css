@@ -9,6 +9,12 @@
 	float: left;
 	width: 250px;
 }
+#spiro_canvas {
+	position: fixed;
+	left: 260px;
+	top: 5px;
+	border: 1px dotted #aaa;
+}
 #settings label {
 	display: inline-block;
 	min-width: 100px;
@@ -37,20 +43,22 @@ input:disabled {
 	opacity: 0.2;
 }
 #spiro_svg {
-	margin: 1rem 0px;
-	border: 1px solid grey;
+	margin-top: 1em;
+	border: 1px dotted grey;
 	box-sizing: border-box;
 }
-body.svg_fullscreen #spiro_svg {
+body.svg_fullscreen #svgholder {
 	position: fixed;
-	top: 0px;
-	left: 255px;
-	margin: 5px;
-	height: 75%;
-	width: 75%;
-	max-width: 100%;
-	max-height: 100%;
-	padding: 2rem;
+	top: 5px;
+	left: 260px;
+	height: 750px;
+	width: 750px;
+	padding: 0px;
+	margin: 0px;
+}
+body.svg_fullscreen #spiro_svg {
+	margin: 0px;
+	padding: 0px;
 }
 body.svg_fullscreen #spiro_canvas {
 	display: none;
