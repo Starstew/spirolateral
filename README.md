@@ -6,5 +6,5 @@ To play with it, visit the <a href="https://starstew.github.io/spirolateral/spir
 Inspired by the math-art "game" of generating patterns with a sequence of numbers and an angle.
 
 For more information about spirolaterals, I recommend
-<a href="http://mypages.iit.edu/~krawczyk/isama00.pdf">http://mypages.iit.edu/~krawczyk/isama00.pdf</a> and
-<a href="http://mathworld.wolfram.com/Spirolateral.html">http://mathworld.wolfram.com/Spirolateral.html</a>.
+<a href="http://mypages.iit.edu/~krawczyk/isama00.pdf">http://mypages.iit.edu/~krawczyk/isama00.pdf</a><br/>
+and <a href="http://mathworld.wolfram.com/Spirolateral.html">http://mathworld.wolfram.com/Spirolateral.html</a>.
