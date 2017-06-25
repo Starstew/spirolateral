@@ -1,6 +1,9 @@
 #settings h1 {
 	margin-top: 0px;
 }
+#about {
+	margin: 10px 0px 30px 0px;
+}
 #settings {
 	display: block;
 	float: left;
