@@ -104,17 +104,38 @@ var drawSpirolateralSvg = function(spirolateral_profile) {
 	var svg = $("#spiro_svg")[0];
 	$("#spiro_svg").empty();
 	$("#spiro_svg").css("background-color",$("#bgcolor").val());
-	var svg_path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
-	var d = "M " + spirolateral_profile.x + " " + spirolateral_profile.y + " L ";
-	for (var i=0; i<path_array.length; i++) {
-		d += path_array[i].x + " " + path_array[i].y + " ";
+
+	var seqlen = spirolateral_profile.sequence.length;
+	var last_x = spirolateral_profile.x;
+	var last_y = spirolateral_profile.y;
+	var svg_path,
+		d;
+	for (var i=0;i<path_array.length;i++) {
+		var is_new_path = i%seqlen == 0; // new path for each iteration
+		var is_last_coord = (i+1) >= path_array.length;
+		if (is_new_path || is_last_coord) {
+			// end previous path
+			if (i>1) {
+				d += path_array[i].x + " " + path_array[i].y + " ";
+				svg_path.setAttribute("d",d);
+				svg_path.setAttribute("vector-effect","non-scaling-stroke");
+				svg_path.style.stroke = spirolateral_profile.color || "#000";
+				svg_path.style.strokeWidth = $("#linewidth").val() + "px";
+				svg_path.style.fill = spirolateral_profile.fillcolor || "transparent";
+				svg.appendChild(svg_path);
+			}
+			if (is_new_path) {
+				// start new path
+				svg_path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+				d = "M " + last_x + " " + last_y + " ";
+				d += path_array[i].x + " " + path_array[i].y + " ";
+			}
+		} else {
+			d += path_array[i].x + " " + path_array[i].y + " ";
+		}
+		last_x = path_array[i].x;
+		last_y = path_array[i].y;
 	}
-	svg_path.setAttribute("d",d);
-	svg_path.setAttribute("vector-effect","non-scaling-stroke");
-	svg_path.style.stroke = spirolateral_profile.color || "#000";
-	svg_path.style.strokeWidth = $("#linewidth").val() + "px";
-	svg_path.style.fill = spirolateral_profile.fillcolor || "transparent";
-	svg.appendChild(svg_path);
 
 	// resize the svg to match content
 	svg.setAttribute("viewBox","0 0 " + max_x + " " + max_y);
@@ -152,11 +173,12 @@ var startAngleMarch = function(delay) {
 		march_interval_id = null;
 		return;
 	}
-	delay = delay || 40;
+	delay = delay || 1000;
 	march_interval_id = window.setInterval(function(){
 		var a = ($("#angle").val() % 179) + 1;
 		a = Math.max(Math.min(a,180),40);
 		$("#angle").val(a);
+		setAutoMinimumIterations();
 		$("#settings").submit();
 	},delay);
 };
@@ -195,16 +217,15 @@ var setAutoMinimumIterations =function() {
 	var sp = getSpirolateralProfileFromForm();
 	var seqlen = sp.sequence.length,
 		angle = sp.angle;
-	var minits = 0;
-	for (var i=1;i<1000;i++) {
+	var minits = 1;
+	for (var i=1;i<360;i++) {
 		// todo: abort if we recognize a "braid"
-		if ((seqlen * angle *i)%360 == 0) {
+		if ((seqlen * angle * i)%360 == 0) {
 			minits = i;
 			break;
 		}
 	}
 	$("#reps").val(minits);
-	triggerDraws();
 };
 
 var triggerDraws = function() {
@@ -303,6 +324,7 @@ $(function(){
 	});
 	$("#autominits").on("click",function(){
 		setAutoMinimumIterations();
+		triggerDraws();
 	});
 
 	// trigger the form
