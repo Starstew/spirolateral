@@ -13,8 +13,9 @@
 		
 		<label for="sequence" title="This sequence of numbers defines the length of each segment of the spirolateral, in order.">Sequence</label><input id="sequence" placeholder="1,2,3" value="1,2,3,4,5"/><br/>
 		<label for="angle" title="The adjustment made to the angle of the line between each segment.">Angle</label><input id="angle" value="60"/><br/>
-		<label for="reps" title="The number of times the sequence of lines will repeat.">Iterations</label><input id="reps" value="6"/><br/>
-		<label for="togglerepspiral" title="Toggle on to increase the length of lines between each iteration. Cretes a spiral form.">Iter. Spiral</label><input id="togglerepspiral" type="checkbox"/><br/>
+		<label for="reps" title="The number of times the sequence of lines will repeat.">Iterations</label><input id="reps" value="6"/>
+		<button id="autominits" title="Using sequence length and angle, set the minimum iterations to create a radially symmetrical form.">Set to min.</button><br/>
+		<label for="togglerepspiral" title="Toggle on to increase the length of lines between each iteration. Cretes a spiral form.">Spiral</label><input id="togglerepspiral" type="checkbox"/><br/>
 		<hr>
 		<label for="start_x">Start X</label><input id="start_x" value="250"/><br/>
 		<label for="start_y">Start Y</label><input id="start_y" value="250"/><br/>
@@ -36,7 +37,7 @@
 		<button type="button" id="curvemarch">TOGGLE CURVE MARCH</button>
 		<button type="button" id="spinmarch">TOGGLE SPIN MARCH</button>
 		<div id="svgholder" title="SVG version of spirolateral, click to focus/defocus">
-			<svg id="spiro_svg" width="96%" viewBox="0 0 750 750" xmlns="http://www.w3.org/2000/svg" title="SVG version"></svg><br/>SVG version
+			<svg id="spiro_svg" width="100%" fill-rule="evenodd" viewBox="0 0 750 750" xmlns="http://www.w3.org/2000/svg" title="SVG version"></svg><br/>SVG version
 		</div>
 		<div id="about">
 			"Spirolateral Generator" coded by Ed Stastny. Visit the <a href="https://github.com/Starstew/spirolateral">GitHub repo for this project</a> for more information.

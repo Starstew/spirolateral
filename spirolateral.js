@@ -97,6 +97,9 @@ var drawSpirolateral = function(spirolateral_profile) {
 };
 
 var drawSpirolateralSvg = function(spirolateral_profile) {
+	if (spirolateral_profile.x == NaN || spirolateral_profile.y == NaN || max_x == NaN || max_y == NaN) {
+		return;
+	}
 	var path_array = getPathArray(spirolateral_profile);
 	var svg = $("#spiro_svg")[0];
 	$("#spiro_svg").empty();
@@ -188,6 +191,22 @@ var startSpinMarch = function(delay) {
 	},delay);
 };
 
+var setAutoMinimumIterations =function() {
+	var sp = getSpirolateralProfileFromForm();
+	var seqlen = sp.sequence.length,
+		angle = sp.angle;
+	var minits = 0;
+	for (var i=1;i<1000;i++) {
+		// todo: abort if we recognize a "braid"
+		if ((seqlen * angle *i)%360 == 0) {
+			minits = i;
+			break;
+		}
+	}
+	$("#reps").val(minits);
+	triggerDraws();
+};
+
 var triggerDraws = function() {
 	var sp_cvs = getSpirolateralProfileFromForm(),
 		sp_svg = Object.assign({},sp_cvs);
@@ -197,7 +216,7 @@ var triggerDraws = function() {
 	sp_svg = offsetToCorner(sp_svg,0);
 	drawSpirolateral(sp_cvs);
 	drawSpirolateralSvg(sp_svg);
-}
+};
 
 var offsetToCorner = function(sp, offset) {
 	getPathArray(sp); // to reset min_x, min_y
@@ -276,11 +295,14 @@ $(function(){
 		$("body").toggleClass("svg_fullscreen");
 	});
 	$("#spiro_svg").on("contextmenu", function(){
-		$("#codedialog .code").text($("#svgholder").html().split("<br")[0]);
+		$("#codedialog .code").text($("#svgholder").html().split("<br")[0].trim());
 		$("#codedialog").toggleClass("active",true);
 	});
 	$("#codedialog .closer").on("click", function(){
 		$("#codedialog").toggleClass("active",false);
+	});
+	$("#autominits").on("click",function(){
+		setAutoMinimumIterations();
 	});
 
 	// trigger the form
