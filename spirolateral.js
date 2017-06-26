@@ -218,7 +218,7 @@ var setAutoMinimumIterations =function() {
 	var seqlen = sp.sequence.length,
 		angle = sp.angle;
 	var minits = 1;
-	for (var i=1;i<360;i++) {
+	for (var i=1;i<6000;i++) {
 		// todo: abort if we recognize a "braid"
 		if ((seqlen * angle * i)%360 == 0) {
 			minits = i;
@@ -278,10 +278,15 @@ $(function(){
 		max: 1000,
 		min: 1
 	});
-	$("#size, #linewidth").spinner({
+	$("#linewidth").spinner({
 		max: 50,
 		min: .1,
 		step: .1
+	});
+	$("#size").spinner({
+		max: 1000,
+		min: 1,
+		step: 1
 	});
 	$("#reps").spinner({
 		max: 1000,
