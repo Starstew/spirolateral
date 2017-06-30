@@ -62,6 +62,14 @@
 #fillcolor {
 	width: 6em;
 }
+#color,
+#bgcolor,
+#fillcolor {
+	padding: 0px;
+	border: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+}
 input:disabled {
 	opacity: 0.2;
 }

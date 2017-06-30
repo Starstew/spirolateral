@@ -17,24 +17,32 @@
 		<button id="autominits" title="Using sequence length and angle, set the minimum iterations to create a radially symmetrical form.">Set to min.</button><br/>
 		<label for="togglerepspiral" title="Toggle on to increase the length of lines between each iteration. Cretes a spiral form.">Spiral</label><input id="togglerepspiral" type="checkbox"/><br/>
 		<hr>
+		<label for="linewidth">Line Width</label><input id="linewidth" value="1"/><br/>
+		<label for="spin">Spin</label><input id="spin" value="0"/><br/>
+		<label for="color">Line Color</label><input type="color" id="color" value="#000000"/><br/>
+		<label for="color_opacity"> &#x21B3; opacity</label><input type="range" id="color_opacity" min="0" max="1" step="0.05" value="0.5"/><br/>
+		<input type="hidden" id="color_compiled" val="rgba(0,0,0,0.5)"/>
+		<label for="bgcolor">BG Color</label><input type="color" id="bgcolor" value="#ffffff"/><br/>
+		<label for="bgcolor_opacity"> &#x21B3; opacity</label><input type="range" id="bgcolor_opacity" min="0" max="1" step="0.05" value="1"/><br/>
+		<input type="hidden" id="bgcolor_compiled" value="rgba(255,255,255,1.0)"/>
+		<hr>
+		<h2>SVG-only</h2>
+		<label for="fillcolor">Fill Color</label><input type="color" id="fillcolor" value="#ffffff"/><br/>
+		<label for="fillcolor_opacity"> &#x21B3; opacity</label><input type="range" id="fillcolor_opacity" min="0" max="1" step="0.05" value="0.5"/><br/>
+		<input type="hidden" id="fillcolor_compiled" val="rgba(255,255,255,0.5)"/>
+		<hr>
+		<h2>Canvas-only</h2>
+		<label for="size" title="Multiplier for length of line, draws spirolateral bigger">Amplitude</label><input id="size" value="25"/><br/>
 		<label for="start_x">Start X</label><input id="start_x" value="425"/><br/>
 		<label for="start_y">Start Y</label><input id="start_y" value="125"/><br/>
 		<label for="togglemanpos">Align corner</label><input id="togglemanpos" type="checkbox"/><br/>
-		<hr>
-		<label for="size" title="Multiplier for length of line, draws spirolateral bigger">Amplitude</label><input id="size" value="25"/><br/>
-		<label for="linewidth">Line Width</label><input id="linewidth" value="1"/><br/>
-		<label for="spin">Spin</label><input id="spin" value="0"/><br/>
-		<label for="color">Color</label><input id="color" value="#000"/><br/>
-		<label for="bgcolor">BG Color</label><input id="bgcolor" value="#fff"/><br/>
-		<label for="fillcolor">Fill Color</label><input id="fillcolor" value="rgba(0,0,0,0.1)"/><br/>
-		<hr>
 		<label for="togglecurve">Curve</label><input id="togglecurve" type="checkbox"/><br/>
 		<label for="curveamount">Curvage</label><input id="curveamount" value="36" disabled/><br/>
+		<button type="button" id="curvemarch">TOGGLE CURVE MARCH</button>
 		<hr>
 		<button type="submit">APPLY SETTINGS</button>
 		<br/>
 		<button type="button" id="ssanglemarch">TOGGLE ANGLE MARCH</button>
-		<button type="button" id="curvemarch">TOGGLE CURVE MARCH</button>
 		<button type="button" id="spinmarch">TOGGLE SPIN MARCH</button>
 		<div id="svgholder" title="SVG version of spirolateral, click to focus/defocus">
 			<svg id="spiro_svg" width="100%" viewBox="0 0 750 750" xmlns="http://www.w3.org/2000/svg" title="SVG version"></svg><br/>SVG version

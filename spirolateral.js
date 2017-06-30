@@ -54,7 +54,7 @@ var getPathArray = function(spirolateral_profile) {
 
 var drawSpirolateral = function(spirolateral_profile) {
 	ctx.clearRect(0, 0, cvs.width, cvs.height);
-	ctx.fillStyle = $("#bgcolor").val();
+	ctx.fillStyle = $("#bgcolor_compiled").val();
 	ctx.fillRect(0,0,cvs.width,cvs.height);
 	ctx.beginPath();
 	var x = spirolateral_profile.x,
@@ -103,7 +103,7 @@ var drawSpirolateralSvg = function(spirolateral_profile) {
 	var path_array = getPathArray(spirolateral_profile);
 	var svg = $("#spiro_svg")[0];
 	$("#spiro_svg").empty();
-	$("#spiro_svg").css("background-color",$("#bgcolor").val());
+	$("#spiro_svg").css("background-color",$("#bgcolor_compiled").val());
 
 	var seqlen = spirolateral_profile.sequence.length;
 	var last_x = spirolateral_profile.x;
@@ -116,7 +116,7 @@ var drawSpirolateralSvg = function(spirolateral_profile) {
 		if (is_new_path || is_last_coord) {
 			// end previous path
 			if (i>1) {
-				d += path_array[i].x + " " + path_array[i].y + " ";
+				d += Number(path_array[i].x) + " " + Number(path_array[i].y) + " ";
 				svg_path.setAttribute("d",d);
 				svg_path.setAttribute("vector-effect","non-scaling-stroke");
 				svg_path.style.stroke = spirolateral_profile.color || "#000";
@@ -153,6 +153,12 @@ var getLineToCoords = function(startx,starty,len,angle,spin) {
 };
 
 var getSpirolateralProfileFromForm = function() {
+	// compile color values from hex and opacity
+	updateColorCompiles("color");
+	updateColorCompiles("bgcolor");
+	updateColorCompiles("fillcolor");
+
+	// generate profile
 	var sp = {
 		x: parseInt($("#start_x").val()),
 		y: parseInt($("#start_y").val()),
@@ -160,8 +166,8 @@ var getSpirolateralProfileFromForm = function() {
 		angle: parseFloat($("#angle").val()),
 		reps: parseInt($("#reps").val()),
 		amp: parseFloat($("#size").val()),
-		color: $("#color").val(),
-		fillcolor: $("#fillcolor").val(),
+		color: $("#color_compiled").val(),
+		fillcolor: $("#fillcolor_compiled").val(),
 		spin: parseInt($("#spin").val())
 	};
 	return sp;
@@ -232,11 +238,28 @@ var triggerDraws = function() {
 	var sp_cvs = getSpirolateralProfileFromForm(),
 		sp_svg = Object.assign({},sp_cvs);
 	if($("#togglemanpos")[0].checked) {
-		sp_cvs = offsetToCorner(sp_cvs,55);	
+		sp_cvs = offsetToCorner(sp_cvs,50);
 	}
 	sp_svg = offsetToCorner(sp_svg,0);
 	drawSpirolateral(sp_cvs);
 	drawSpirolateralSvg(sp_svg);
+};
+
+var updateColorCompiles = function(colorfield) {
+	var color_hex = $("#"+colorfield).val(),
+		color_rgb = hexToRgb(color_hex),
+		color_opa = $("#"+colorfield+"_opacity").val(),
+		color_rgba = "rgba(" + color_rgb.r + "," + color_rgb.g + "," + color_rgb.b + "," + color_opa + ")";
+	return $("#" + colorfield + "_compiled").val(color_rgba);
+};
+
+var hexToRgb = function(hex) {
+	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result ? {
+		r: parseInt(result[1], 16),
+		g: parseInt(result[2], 16),
+		b: parseInt(result[3], 16)
+	} : null;
 };
 
 var offsetToCorner = function(sp, offset) {
@@ -310,6 +333,9 @@ $(function(){
 	$("#spinmarch").on("click",function(e){
 		startSpinMarch();
 	});
+	$("#color, #bgcolor, #fillcolor, #color_opacity, #bgcolor_opacity, #fillcolor_opacity").on("change",function(e){
+		triggerDraws();
+	})
 	$("#settings input").on("keyup",function(e){
 		triggerDraws();
 	});
